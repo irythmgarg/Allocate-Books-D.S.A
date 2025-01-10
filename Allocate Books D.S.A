@@ -1,0 +1,44 @@
+int hlo(vector<int>& a, int mid, int students) {
+    int count = 1;           // Count of students needed
+    int sum = 0;             // Sum of pages assigned to the current student
+
+    for (int i = 0; i < a.size(); i++) {
+        if (sum + a[i] <= mid) { // Check if the current book can be assigned to the current student
+            sum += a[i];
+        } else {
+            count++;          // Assign the book to the next student
+            sum = a[i];       // Start a new sum for the next student
+        }
+    }
+    return count;             // Return the total number of students needed
+}
+
+int findPages(vector<int>& a, int n, int students) {
+    // If there are more students than books, return -1
+    if (students > n) 
+        return -1;
+
+    int s = *max_element(a.begin(), a.end()); // The smallest possible maximum pages
+    int sum = 0;                              // Total sum of pages
+
+    if (students == n) 
+        return s; // Each student gets exactly one book, so the answer is the max pages in any book
+    
+    for (int i = 0; i < n; i++) 
+        sum += a[i];
+    
+    int e = sum; // The largest possible maximum pages
+    int mid;
+    
+    while (s <= e) {
+        mid = (s + e) / 2;          // Calculate the mid-point
+        int ans = hlo(a, mid, students); // Check the number of students required if max pages are `mid`
+        
+        if (ans > students)         // If more students are needed, increase the lower bound
+            s = mid + 1;
+        else                        // If it's valid, decrease the upper bound
+            e = mid - 1;
+    }
+    
+    return s; // Return the smallest possible maximum pages
+}
